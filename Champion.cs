@@ -13,20 +13,26 @@ namespace Loldle_Solver
         public List<string> Position = new List<string>();
         public List<string> Species = new List<string>();
         public string Resource;
-        public string rangeType;
+        public List<string> rangeType = new List<string>();
         public List<string> Region = new List<string>();
         public int releaseYear;
 
-        public Champion(string name, string gen, List<string> pos, List<string> species, string res, string rangeT, List<string> reg, int releaseY)
+        public Champion(string name, string gen, string[] pos, string[] species, string res, string[] rangeT, string[] reg, int releaseY)
         {
             Name = name;
             Gender = gen;
-            Position = pos;
-            Species = species;
+            Position = pos.ToList();
+            Species = species.ToList();
             Resource = res;
-            rangeType = rangeT;
-            Region = reg;
+            rangeType = rangeT.ToList();
+            Region = reg.ToList();
             releaseYear = releaseY;
+        }
+        public override string ToString()
+        {
+            //return string.Format(@"Name: {0}
+//Release Year: {1}", Name, releaseYear);
+            return string.Format(@"Name: {0}", Name);
         }
     }
 }
