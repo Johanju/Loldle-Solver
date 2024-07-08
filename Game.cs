@@ -9,35 +9,41 @@ namespace Loldle_Solver
     public class Game
     {
         public Champion gameAnswer;
-        public void GetRandomChampion(Champion[] champions, Random rng)
-        {
-            gameAnswer = champions[rng.Next(champions.Length)];
-        }
+        public bool gameOver;
 
-        public int[] CheckGuess(Champion champion)
+        public Game(List<Champion> champions, Random rng)
         {
-            if (gameAnswer == null) 
+            gameAnswer = champions[rng.Next(champions.Count)];
+            gameOver = false;
+        }
+        public (Trait[], int[]) CheckGuess(Champion champion)
+        {
+            // Calculates "correctness" of every trait and returns a trait and int correctness array.
+            // The trait array will probably be removed because it only returns an unchanged trait array from the guessed champion.
+            if (champion.Name == gameAnswer.Name)
             {
-                Console.WriteLine("There is no champion hiding.");
-                return []; 
+                gameOver = true;
+                return ([], []);
             }
-            int[] verdict = new int[7] {
-                CompareStrings(gameAnswer.Gender, champion.Gender),
-                CompareLists(gameAnswer.Position, champion.Position),
-                CompareLists(gameAnswer.Species, champion.Species),
-                CompareStrings(gameAnswer.Resource, champion.Resource),
-                CompareLists(gameAnswer.rangeType, champion.rangeType),
-                CompareLists(gameAnswer.Region, champion.Region),
-                CompareYears(champion.releaseYear)};
-            return verdict;
+            Trait[] traits = champion.Traits;
+            int[] correctness = [
+                -5,
+                Compare(gameAnswer.Gender, champion.Gender),
+                Compare(gameAnswer.Position, champion.Position),
+                Compare(gameAnswer.Species, champion.Species),
+                Compare(gameAnswer.Resource, champion.Resource),
+                Compare(gameAnswer.rangeType, champion.rangeType),
+                Compare(gameAnswer.Region, champion.Region),
+                Compare(champion.releaseYear)];
+            return (traits, correctness);
         }
 
-        private  int CompareStrings(string type1, string type2)
+        private  int Compare(string type1, string type2)
         {
             return type1 == type2 ? 1 : -1;
         }
 
-        private  int CompareLists(List<string> list1, List<string> list2)
+        private  int Compare(List<string> list1, List<string> list2)
         {
             if (list1.SequenceEqual(list2))
             {
@@ -53,17 +59,23 @@ namespace Loldle_Solver
             }
         }
 
-        private int CompareYears(int releaseYear)
+        public int Compare(int releaseYear)
         {
             if (releaseYear < gameAnswer.releaseYear)
             {
-                return -1;
+                return 1;
             }
             else if (releaseYear > gameAnswer.releaseYear)
             {
-                return 1;
+                return -1;
             }
             return 0;
+        }
+
+        public void Reset(List<Champion> champions, Random rng)
+        {
+            gameAnswer = champions[rng.Next(champions.Count)];
+            gameOver = false;
         }
     }
 }
